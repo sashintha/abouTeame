@@ -1,4 +1,5 @@
 #include "address_map_arm.h"
+#include "timer.c"
 
 // define pointers
 volatile int * SW_ptr = (int *)SW_BASE; //pointer for switches
@@ -22,19 +23,6 @@ typedef struct ctrlStruct{
 	int type;
 	int currentTemp;
 }ctrlStruct;
-
-typedef struct a9_timer{
-	int loadValue;
-	int currentValue;
-	int control;
-	int status;
-}a9_timer;
-
-typedef struct clock_{
-	int ms;
-	int s;
-	int m;
-}clock;
 
 int ReadSwitches() {
     // return switch
