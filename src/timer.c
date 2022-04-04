@@ -6,7 +6,14 @@ volatile int * SSD_ptr1 = (int *)HEX3_HEX0_BASE; //pointer for SSD
 volatile int * SSD_ptr2 = (int *)HEX5_HEX4_BASE; //pointer for SSD
 volatile int * BTN_ptr = (int *)KEY_BASE; //pointer for push buttons
 
-int lookUpTable[] = {0x3F, 0x6, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x7, 0x7F, 0x6F}; 
+// hardcode for testing
+// volatile int * SW_ptr = (int *)0xFF200040; //pointer for switches
+// volatile int * LED_ptr = (int *)0xFF200000; //pointer for LEDs
+// volatile int * SSD_ptr1 = (int *)0xFF200020; //pointer for SSD
+// volatile int * SSD_ptr2 = (int *)0xFF200030; //pointer for SSD
+// volatile int * BTN_ptr = (int *)0xFF200050; //pointer for push buttons
+
+int lookUpTable[] = {0x3F, 0x6, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x7, 0x7F, 0x6F};
 
 typedef struct a9_timer{
 	int loadValue;
@@ -29,6 +36,14 @@ typedef struct mainStruct {
 	int lastButtonState;
 } mainStruct;
 
+void start_timer(mainStruct* ctrlStruct);
+void stop_timer(mainStruct* ctrlStruct);
+void update_timer(mainStruct* ctrlStruct);
+void check_timer(mainStruct* ctrlStruct);
+void lap_timer(mainStruct* ctrlStruct);
+void display_hex(mainStruct* ctrlStruct);
+void clear_timer(mainStruct* ctrlStruct);
+void checkBtn(mainStruct* ctrlStruct);
 
 void start_timer(mainStruct* ctrlStruct){ //starts the timer counting, clears previous timeout flag
 	ctrlStruct->timer->control = 0b0011;
