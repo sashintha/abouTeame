@@ -1,4 +1,7 @@
 #include "address_map_arm.h"
+#include "timer.c"
+#include "audioOut.c"
+
 
 // define pointers
 volatile int * SW_ptr = (int *)SW_BASE; //pointer for switches
