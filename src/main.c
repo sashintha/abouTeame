@@ -248,7 +248,7 @@ ctrlStruct ctrlStruct;
     // ------ STAND-BY MODE ------ //
     // wait for input from on button -> tea selection -> start button
     // --------------------------- //
-    ReadSwitches();
+    ReadSwitches(ctrlStruct);
 
     ctrlStruct.currentTemp = readTemp();
 
