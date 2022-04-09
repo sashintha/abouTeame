@@ -1,6 +1,6 @@
 //#include "address_map_arm.h"
 /* globals */
-#define BUF_SIZE 80000 // about 10 seconds of buffer (@ 8K samples/sec)
+#define BUF_SIZE 40000 // about 10 seconds of buffer (@ 8K samples/sec)
 #define BUF_THRESHOLD 96 // 75% of 128 word buffer
 /* function prototypes */
 void check_KEYs(int *, int *, int *);
@@ -17,7 +17,6 @@ int main(void) {
     //volatile int * red_LED_ptr = (int *)LED_BASE;
     //volatile int * audio_ptr = (int *)AUDIO_BASE;
 
-
     /* used for audio record/playback */
     int fifospace;
     int record = 0, play = 0, buffer_index = 0;
@@ -27,38 +26,39 @@ int main(void) {
     record = 0;
     play = 0;
 
+    *(red_LED_ptr) = 0x1; // turn on LEDR[0]
+    fifospace =
+    *(audio_ptr + 1); // read the audio port fifospace register
+    if ((fifospace & 0x000000FF) > BUF_THRESHOLD){ // check RARC
+    // store data until the the audio-in FIFO is empty or the buffer
+    // is full
+        while ((fifospace & 0x000000FF) && (buffer_index < BUF_SIZE)) {
+            left_buffer[buffer_index] = *(audio_ptr + 2);
+            right_buffer[buffer_index] = *(audio_ptr + 3);
+            ++buffer_index;
+            if (buffer_index == BUF_SIZE) {
+                // done recording
+                record = 0;
+                *(red_LED_ptr) = 0x0; // turn off LEDR
+            }
+            fifospace = *(audio_ptr +
+            1); // read the audio port fifospace register
+        }
+    }
+
     while (1) {
         check_KEYs(&record, &play, &buffer_index);
-        if (record) {
-            *(red_LED_ptr) = 0x1; // turn on LEDR[0]
-            fifospace =
-            *(audio_ptr + 1); // read the audio port fifospace register
-            if ((fifospace & 0x000000FF) > BUF_THRESHOLD){ // check RARC
-            // store data until the the audio-in FIFO is empty or the buffer
-            // is full
-                while ((fifospace & 0x000000FF) && (buffer_index < BUF_SIZE)) {
-                    left_buffer[buffer_index] = *(audio_ptr + 2);
-                    right_buffer[buffer_index] = *(audio_ptr + 3);
-                    ++buffer_index;
-                    if (buffer_index == BUF_SIZE) {
-                        // done recording
-                        record = 0;
-                        *(red_LED_ptr) = 0x0; // turn off LEDR
-                    }
-                    fifospace = *(audio_ptr +
-                    1); // read the audio port fifospace register
-                }
-            }
-        } else if (play) {
+        if (play) {
             *(red_LED_ptr) = 0x2; // turn on LEDR_1
             fifospace =
                 *(audio_ptr + 1); // read the audio port fifospace register
             if ((fifospace & 0x00FF0000) > BUF_THRESHOLD){ // check WSRC
-            // output data until the buffer is empty or the audio-out FIFO
-            // is full
+                // output data until the buffer is empty or the audio-out FIFO
+                // is full
                 while ((fifospace & 0x00FF0000) && (buffer_index < BUF_SIZE)) {
                     *(audio_ptr + 2) = left_buffer[buffer_index];
                     *(audio_ptr + 3) = right_buffer[buffer_index];
+                    
                     ++buffer_index;
                     if (buffer_index == BUF_SIZE) {
                         // done playback
@@ -71,6 +71,7 @@ int main(void) {
         }
     }
 }
+
 /****************************************************************************************
 * Subroutine to read KEYs
 ****************************************************************************************/

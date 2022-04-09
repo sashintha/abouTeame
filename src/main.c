@@ -68,9 +68,9 @@ void Pause(ctrlStruct* ctrlStruct){
 void SetTimer(int time){
     // set timer based on tea type
 }
+
 void DisplayTimer(ctrlStruct* ctrlStruct){
     // display timer on SSD
-
 }
 
 void TeaSelect(ctrlStruct* ctrlStruct){
@@ -134,6 +134,7 @@ void main(){
 //printf("%d \n");
 
     while(1){
+        
     // ------ STAND-BY MODE ------ //
     // wait for input from on button -> tea selection -> start button
     // --------------------------- //
@@ -148,7 +149,6 @@ void main(){
     // ------ FINISHED MODE ------ //
     // timer reaches 0 -> raise arm -> display visual feedback
     // --------------------------- //
-
 
     }
 
