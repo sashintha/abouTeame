@@ -72,24 +72,6 @@ int ReadSwitches(ctrlStruct ctrlStruct) {
     ctrlStruct.type = *SW_ptr; 
 	return *SW_ptr;
 }
-
-void Start(ctrlStruct* ctrlStruct){
-    // start timer
-    // lower arm
-
-}
-
-void Stop(ctrlStruct* ctrlStruct){
-    // stop timer
-    // raise arm
-
-}
-
-void Pause(ctrlStruct* ctrlStruct){
-    // pause timer
-    // raise arm
-
-}
 void SetTimer(int time){
     // set timer based on tea type
 }
@@ -266,7 +248,7 @@ ctrlStruct ctrlStruct;
     // ------ STAND-BY MODE ------ //
     // wait for input from on button -> tea selection -> start button
     // --------------------------- //
-    
+    ReadSwitches();
 
     ctrlStruct.currentTemp = readTemp();
 
