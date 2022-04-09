@@ -80,7 +80,7 @@ void TeaSelect(ctrlStruct* ctrlStruct){
 
     int value = ReadSwitches();
      switch(value) {
-        case 0:
+        case 0: 
             //black, 4 min
             SetTimer(teaTimeTable[0]);
             break; 
