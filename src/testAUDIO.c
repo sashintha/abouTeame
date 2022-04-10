@@ -37,28 +37,28 @@ int main(void)
     play = 0;
 
     *(red_LED_ptr) = 0x1; // turn on LEDR[0]
-    // fifospace = *(audio_ptr + 1); // read the audio port fifospace register
+    fifospace = *(audio_ptr + 1); // read the audio port fifospace register
    
-    // if ((fifospace & 0x000000FF) > BUF_THRESHOLD)
-    // {   // check RARC
-    //     // store data until the the audio-in FIFO is empty or the buffer
-    //     // is full
-    //     while ((fifospace & 0x000000FF) && (buffer_index < BUF_SIZE))
-    //     {
-    //         left_buffer[buffer_index] = *(audio_ptr + 2);
-    //         right_buffer[buffer_index] = *(audio_ptr + 3);
+    if ((fifospace & 0x000000FF) > BUF_THRESHOLD)
+    {   // check RARC
+        // store data until the the audio-in FIFO is empty or the buffer
+        // is full
+        while ((fifospace & 0x000000FF) && (buffer_index < BUF_SIZE))
+        {
+            left_buffer[buffer_index] = *(audio_ptr + 2);
+            right_buffer[buffer_index] = *(audio_ptr + 3);
 
-    //         ++buffer_index;
-    //         if (buffer_index == BUF_SIZE)
-    //         {
-    //             // done recording
-    //             record = 0;
-    //             *(red_LED_ptr) = 0x0; // turn off LEDR
-    //         }
-    //         fifospace = *(audio_ptr + 1); // read the audio port fifospace register
+            ++buffer_index;
+            if (buffer_index == BUF_SIZE)
+            {
+                // done recording
+                record = 0;
+                *(red_LED_ptr) = 0x0; // turn off LEDR
+            }
+            fifospace = *(audio_ptr + 1); // read the audio port fifospace register
             
-    //     }
-    // }
+        }
+    }
 
     while (1)
     {
