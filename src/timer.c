@@ -177,7 +177,7 @@ int main(){
 	mainStruct ctrlStruct;
 	ctrlStruct.timer = (a9_timer*)0xfffec600;
 	ctrlStruct.timer->loadValue = 2000000; // timeout = 1/(200 MHz) x 200x10^6 = 1 sec
-	clear_timer(&ctrlStruct);
+	//clear_timer(&ctrlStruct);
 
 	while(1){
 		checkBtn(&ctrlStruct);
