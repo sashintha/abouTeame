@@ -26,7 +26,6 @@ int voltageTable[] = {1192, 1387, 1585, 1802, 2012, 2226, 2431, 2627, 2813, 2986
 // values for seven segement display
 int lookUpTable[] = {0x3F, 0x6, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x7, 0x7F, 0x6F};
 
-// STRUCTS START
 typedef struct ctrlStruct
 {
     int type;
@@ -73,8 +72,6 @@ typedef struct timerStruct
     int timerStartedDone;
 } timerStruct;
 
-// STRUCTS END
-
 volatile GPIO *gpio_ptr = (GPIO *)0xff200060;
 volatile ADC *adc_ptr = (ADC *)0xff204000;
 
@@ -82,18 +79,6 @@ void Start(ctrlStruct *ctrlStruct);
 void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T);
 void ArmMovement(ctrlStruct *ctrlStruct);
 int ReadSwitches(ctrlStruct *ctrlStruct);
-void reset(ctrlStruct *ctrlStruct);
-
-//
-
-// This does not work...
-void reset(ctrlStruct *ctrlStruct)
-{
-    ctrlStruct->currentTemp = 0;
-    ctrlStruct->teaTemp = 0;
-    ctrlStruct->time = 0;
-    ctrlStruct->type = 0;
-}
 
 int ReadSwitches(ctrlStruct *ctrlStruct)
 {
@@ -113,7 +98,6 @@ int ReadSwitches(ctrlStruct *ctrlStruct)
 void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T)
 {
     int value = T;
-    // printf("%d \n", value);
     switch (value)
     {
     case 1:
@@ -121,80 +105,60 @@ void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T)
         *(LED_ptr) = 0x1;
         timeStruct->time.m = 0b0100;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[0];
-        // ctrlStruct->teaTemp = teaTempTable[0];
         break;
     case 2:
         // green, 90 sec
         *(LED_ptr) = 0x2;
         timeStruct->time.m = 0b01;
         timeStruct->time.s = 0b011110;
-        // ctrlStruct->time = teaTimeTable[1];
-        // ctrlStruct->teaTemp = teaTempTable[1];
         break;
     case 4:
         // white, 2.5 min
         *(LED_ptr) = 0x4;
         timeStruct->time.m = 0b010;
         timeStruct->time.s = 0b011110;
-        // ctrlStruct->time = teaTimeTable[2];
-        // ctrlStruct->teaTemp = teaTempTable[2];
         break;
     case 8:
         *(LED_ptr) = 0x8;
         // oolong, 2.5 min
         timeStruct->time.m = 0b010;
         timeStruct->time.s = 0b011110;
-        // ctrlStruct->time = teaTimeTable[3];
-        // ctrlStruct->teaTemp = teaTempTable[3];
         break;
     case 16:
         *(LED_ptr) = 0xF;
         // Pu-erh, 5 min
         timeStruct->time.m = 0b0101;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[4];
-        // ctrlStruct->teaTemp = teaTempTable[4];
         break;
     case 32:
         *(LED_ptr) = 0x20;
         // Purple, 3 min
         timeStruct->time.m = 0b011;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[5];
-        // ctrlStruct->teaTemp = teaTempTable[5];
         break;
     case 64:
         *(LED_ptr) = 0x40;
         // Mate, 4 min
         timeStruct->time.m = 0b0100;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[6];
-        // ctrlStruct->teaTemp = teaTempTable[6];
         break;
     case 128:
         *(LED_ptr) = 0x80;
         // Herbal, 5-10 min
         timeStruct->time.m = 0b0101;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[7];
-        // ctrlStruct->teaTemp = teaTempTable[7];
         break;
     case 256:
         *(LED_ptr) = 0x100;
         // Rooibos, 5-10 min
         timeStruct->time.m = 0b0101;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[8];
-        // ctrlStruct->teaTemp = teaTempTable[8];
         break;
     case 512:
         *(LED_ptr) = 0x200;
         // Rooibos, 5-10 min
         timeStruct->time.m = 0b0101;
         timeStruct->time.s = 0b0;
-        // ctrlStruct->time = teaTimeTable[8];
-        // ctrlStruct->teaTemp = teaTempTable[8];
         break;
     }
 }
@@ -269,7 +233,7 @@ int readTemp(ctrlStruct ctrlStruct)
 //  }
 
 // --------------------------- //
-//  THIS SECTION IS FOR TIMER
+//            TIMER            //
 // --------------------------- //
 
 // int lookUpTable[] = {0x3F, 0x6, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x7, 0x7F, 0x6F};
@@ -355,8 +319,6 @@ void display_hex(timerStruct *timeStruct)
     tempS = timeStruct->time.s;
     tempM = timeStruct->time.m;
 
-    printf("%d \n", tempS);
-
     // if (timeStruct->done == 0)
     // {
     for (int i = 0; i < 2; i++)
@@ -403,11 +365,11 @@ void clear_timer(timerStruct *timeStruct)
     display_hex(timeStruct);
 }
 
-///
-// TIMER SECTION END
-///
+// --------------------------- //
+//          TIMER END          //
+// --------------------------- //
 
-// func for audio buttons testing ****
+// FUNCTION FOR TESTING AUDIO OUTPUT //
 void check_KEYs(int *KEY0, int *KEY1, int *counter)
 {
     int KEY_value;
@@ -435,9 +397,11 @@ void check_KEYs(int *KEY0, int *KEY1, int *counter)
         *KEY1 = 1;
     }
 }
-/////
+// END //
 
-/// FINAL MAIN
+// --------------------------- //
+//            MAIN             //
+// --------------------------- //
 
 void main()
 {
@@ -461,7 +425,7 @@ void main()
     fifospace =
         *(audio_ptr + 1); // read the audio port fifospace register
     if ((fifospace & 0x000000FF) > BUF_THRESHOLD)
-    {   // check RARC
+    { // check RARC
         // store data until the the audio-in FIFO is empty or the buffer
         // is full
         while ((fifospace & 0x000000FF) && (buffer_index < BUF_SIZE))
@@ -475,8 +439,7 @@ void main()
                 record = 0;
                 *(red_LED_ptr) = 0x0; // turn off LEDR
             }
-            fifospace = *(audio_ptr +
-                          1); // read the audio port fifospace register
+            fifospace = *(audio_ptr + 1); // read the audio port fifospace register
         }
     }
 
@@ -486,7 +449,6 @@ void main()
     timeStruct.timerStartedDone = 0;
     int selectedTea;
 
-    printf("%d \n", ctrlStruct.timerStarted);
     // READ SWITCH (to get what tea to steep)
     selectedTea = ReadSwitches(&ctrlStruct);
 
@@ -498,10 +460,6 @@ void main()
         // GET TEMP FROM GPIO (currently useless)
         // constantly reading from GPIO to get changing temperature (simulating temperture change)
         // ctrlStruct.currentTemp = readTemp(ctrlStruct);
-
-        //
-
-        // printf("%d \n", ctrlStruct.timerStarted);
 
         // get audio //////////////////////////////
 
@@ -544,5 +502,3 @@ void main()
         }
     }
 }
-
-
