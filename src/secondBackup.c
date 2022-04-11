@@ -32,7 +32,6 @@ typedef struct ctrlStruct
     int teaTemp;
     int time;
     int timerStarted;
-    int tempReached;
 } ctrlStruct;
 
 typedef struct _GPIO
@@ -126,7 +125,7 @@ void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T)
         timeStruct->time.s = 0b011110;
         break;
     case 16:
-        *(LED_ptr) = 0x10;
+        *(LED_ptr) = 0xF;
         // Pu-erh, 5 min
         timeStruct->time.m = 0b0101;
         timeStruct->time.s = 0b0;
@@ -157,9 +156,13 @@ void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T)
         break;
     case 512:
         *(LED_ptr) = 0x200;
+        // Rooibos, 5-10 min
+        // timeStruct->time.m = 0b0101;
+        // timeStruct->time.s = 0b0;
+
         // USING FINAL SWITCH FOR TESTING //
         timeStruct->time.m = 0b0;
-        timeStruct->time.s = 0b011;
+        timeStruct->time.s = 0b101;
         break;
     }
 }
@@ -178,78 +181,102 @@ int readTemp(ctrlStruct ctrlStruct)
         if (readChannel == 0)
         {
             adc_data = adc_ptr->ch0;
-            checkVoltage(ctrlStruct, adc_data);
+            changeVoltage(adc_data);
             return adc_data;
         }
     }
 }
 
 // potentiometer changes in voltage
-void checkVoltage(ctrlStruct ctrlStruct, int temp)
+void changeVoltage(temp)
 {
-    int wantedTea = ctrlStruct.type;
-
-    // LOOP UNTIL WATER REACHES DESIRED TEMPERATURE
-    while (1)
+    if (temp < voltageTable[0])
     {
-        ///////////////////
-        // BLACK
-        if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 1))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // HERBAL
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 128))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // ROOIBOS
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 512))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // PU-ERH
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 16))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        ///////////////////
-        // GREEN
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 2))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // WHITE
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 4))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // PURPLE
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 32))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        ///////////////////
-        // OOLONG
-        else if ((voltageTable[18] < temp < voltageTable[19]) && (wantedTea == 8))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        // MATE
-        else if ((voltageTable[12] < temp < voltageTable[13]) && (wantedTea == 64))
-        {
-            printf("%d \n", temp);
-            return 1;
-        }
-        ///////////////////
+        printf("temp = 0");
+    }
+    else if (temp == voltageTable[1])
+    {
+        printf("temp = 5");
+    }
+    else if (temp == voltageTable[2])
+    {
+        printf("temp = 10");
+    }
+    else if (temp == voltageTable[3])
+    {
+        printf("temp = 15");
+    }
+    else if (temp == voltageTable[4])
+    {
+        printf("temp = 20");
+    }
+    else if (temp == voltageTable[5])
+    {
+        printf("temp = 25");
+    }
+    else if (temp == voltageTable[6])
+    {
+        printf("temp = 30");
+    }
+    else if (temp == voltageTable[7])
+    {
+        printf("temp = 35");
+    }
+    else if (temp == voltageTable[8])
+    {
+        printf("temp = 40");
+    }
+    else if (temp == voltageTable[9])
+    {
+        printf("temp = 45");
+    }
+    else if (temp == voltageTable[10])
+    {
+        printf("temp = 50");
+    }
+    else if (temp == voltageTable[11])
+    {
+        printf("temp = 55");
+    }
+    else if (temp == voltageTable[12])
+    {
+        printf("temp = 60");
+    }
+    else if (temp == voltageTable[13])
+    {
+        printf("temp = 65");
+    }
+    else if (temp == voltageTable[14])
+    {
+        printf("temp = 70");
+    }
+    else if (temp == voltageTable[15])
+    {
+        printf("temp = 75");
+    }
+    else if (temp == voltageTable[16])
+    {
+        printf("temp = 80");
+    }
+    else if (temp == voltageTable[17])
+    {
+        printf("temp = 85");
+    }
+    else if (temp == voltageTable[18])
+    {
+        printf("temp = 90");
+    }
+    else if (temp == voltageTable[19])
+    {
+        printf("temp = 95");
+    }
+    else if (temp == voltageTable[20])
+    {
+        printf("temp = 100");
+    }
+    else if (temp == voltageTable[21])
+    {
+        printf("temp = 105");
     }
 }
 
@@ -382,8 +409,7 @@ void check_KEYs(int *KEY0, int *KEY1, int *counter)
     int KEY_value;
     KEY_value = *(KEY_ptr);
 
-    if (KEY_value == 1)
-    {
+    if(KEY_value == 1){
         *KEY1 = 0;
     }
 }
@@ -407,32 +433,18 @@ void main()
     // READ SWITCH (to get what tea to steep)
     selectedTea = ReadSwitches(&ctrlStruct);
 
-    // ********************************************************
-    // CODE FOR WAITING FOR WATER TO REACH REQUIRED TEMPERATURE
-    // ********************************************************
-    // WAIT FOR WATER TO HEAT TO CORRECT TEMPERATURE
-    // while (1)
-    // {
-    //     // READ TEMP / VOLATGE
-    //     ctrlStruct.currentTemp = readTemp(ctrlStruct);
-
-    //     // NEXT SET TIMER VALUES BASED ON TEA
-    //     TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
-    // }
-
-    // ************************************************************
-    // CODE WITHOUT WAITING FOR WATER TO REACH REQUIRED TEMPERATURE
-    // ************************************************************
     // SET TEA BASED OFF SELECTED SWITCH
     TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
 
-    // FOR AUDIO RECORD AND PLAYBACK
+    /* used for audio record/playback */
     int fifospace;
     int record = 0, play = 0, buffer_index = 0;
     int left_buffer[BUF_SIZE];
     int right_buffer[BUF_SIZE];
+    /* read and echo audio data */
     record = 0;
     play = 1;
+    int temp = 0;
 
     fifospace = *(audio_ptr + 1); // read the audio port fifospace register
     if ((fifospace & 0x000000FF) > BUF_THRESHOLD)
@@ -442,6 +454,7 @@ void main()
         {
             left_buffer[buffer_index] = *(audio_ptr + 2);
             right_buffer[buffer_index] = *(audio_ptr + 3);
+            temp++;
             ++buffer_index;
             fifospace = *(audio_ptr + 1); // read the audio port fifospace register
         }
@@ -449,7 +462,7 @@ void main()
 
     while (1)
     {
-        // GET TEMP FROM GPIO
+        // GET TEMP FROM GPIO (currently useless)
         // constantly reading from GPIO to get changing temperature (simulating temperture change)
         // ctrlStruct.currentTemp = readTemp(ctrlStruct);
 
