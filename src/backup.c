@@ -1,6 +1,7 @@
 #define BUF_SIZE 40000   // about 10 seconds of buffer (@ 8K samples/sec)
 #define BUF_THRESHOLD 96 // 75% of 128 word buffer
 
+
 // define pointers
 volatile int *SW_ptr = (int *)0xFF200040;   // pointer for switches
 volatile int *LED_ptr = (int *)0xFF200000;  // pointer for LEDs
@@ -12,6 +13,7 @@ volatile int *BTN_ptr = (int *)0xFF200050;  // pointer for push buttons
 volatile int *red_LED_ptr = (int *)0xFF200000;
 volatile int *audio_ptr = (int *)0xFF203040;
 volatile int *KEY_ptr = (int *)0xFF200050;
+//
 
 // time in sec
 int teaTimeTable[] = {240, 90, 150, 150, 300, 180, 240, 450, 450};
@@ -394,6 +396,7 @@ void clear_timer(timerStruct *timeStruct)
     timeStruct->timer->control = 0;
     timeStruct->lastButtonState = 0;
     timeStruct->done = 0;
+    // timeStruct->timer->status = 1;
     display_hex(timeStruct);
 }
 
@@ -407,11 +410,30 @@ void check_KEYs(int *KEY0, int *KEY1, int *counter)
     *counter = 0;
 
     int KEY_value;
-    KEY_value = *(KEY_ptr);
+    KEY_value = *(KEY_ptr); // read the pushbutton KEY values
+    while (*KEY_ptr)
+        ; // wait for pushbutton KEY release
 
-    if(KEY_value == 1){
-        *KEY1 = 0;
-    }
+    // if (KEY_value == 0x1)
+    // { // check KEY0
+    //     // reset counter to start recording
+    //     *counter = 0;
+    //     // clear audio-in FIFO
+    //     *(audio_ptr) = 0x4;
+    //     *(audio_ptr) = 0x0;
+
+    //     *KEY0 = 1;
+    // }
+    // else if (KEY_value == 0x2) // check KEY1
+    // {
+    //     // reset counter to start playback
+    //     *counter = 0;
+    //     // clear audio-out FIFO
+    //     *(audio_ptr) = 0x8;
+    //     *(audio_ptr) = 0x0;
+
+    //     *KEY1 = 1;
+    // }
 }
 
 // --------------------------- //
@@ -446,7 +468,9 @@ void main()
     play = 1;
     int temp = 0;
 
+    *(red_LED_ptr) = 0x1;         // turn on LEDR[0]
     fifospace = *(audio_ptr + 1); // read the audio port fifospace register
+
     if ((fifospace & 0x000000FF) > BUF_THRESHOLD)
     {
         // store data until the the audio-in FIFO is empty or the buffer is full
@@ -456,9 +480,18 @@ void main()
             right_buffer[buffer_index] = *(audio_ptr + 3);
             temp++;
             ++buffer_index;
+            // if (buffer_index == BUF_SIZE)
+            // {
+            //     // done recording
+            //     record = 0;
+            //     //*(red_LED_ptr) = 0x0; // turn off LEDR
+            //     //printf("%d \n", temp);
+            // }
             fifospace = *(audio_ptr + 1); // read the audio port fifospace register
         }
     }
+
+   
 
     while (1)
     {
@@ -470,28 +503,31 @@ void main()
         if (timeStruct.playAudio == 1)
         {
             check_KEYs(&record, &play, &buffer_index);
+            *(red_LED_ptr) = 0x2;         // turn on LEDR_1
             fifospace = *(audio_ptr + 1); // read the audio port fifospace register
 
-            if (play)
-            {
-                if ((fifospace & 0x00FF0000) > BUF_THRESHOLD)
+            if ((fifospace & 0x00FF0000) > BUF_THRESHOLD)
+            { // check WSRC
+                // output data until the buffer is empty or the audio-out FIFO
+                // is full
+                while ((fifospace & 0x00FF0000) && (buffer_index < BUF_SIZE))
                 {
-                    // output data until the buffer is empty or the audio-out FIFO is full
-                    while ((fifospace & 0x00FF0000) && (buffer_index < BUF_SIZE))
-                    {
-                        *(audio_ptr + 2) = left_buffer[buffer_index];
-                        *(audio_ptr + 3) = right_buffer[buffer_index];
+                    *(audio_ptr + 2) = left_buffer[buffer_index];
+                    *(audio_ptr + 3) = right_buffer[buffer_index];
 
-                        ++buffer_index;
-                        if (buffer_index == BUF_SIZE)
-                        {
-                            timeStruct.playAudio = 0;
-                            // done playback
-                        }
-                        fifospace = *(audio_ptr + 1); // read the audio port fifospace register
+                    ++buffer_index;
+                    //printf("%d \n", buffer_index);
+                    if (buffer_index == BUF_SIZE)
+                    {
+                        timeStruct.playAudio = 0;
+                        // done playback
+                        //play = 0;
+                        *(red_LED_ptr) = 0x0; // turn off LEDR
                     }
+                    fifospace = *(audio_ptr + 1); // read the audio port fifospace register
                 }
             }
+           
         }
 
         // start timer and display on seven segement display

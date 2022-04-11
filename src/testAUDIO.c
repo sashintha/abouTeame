@@ -49,13 +49,13 @@ int main(void)
             right_buffer[buffer_index] = *(audio_ptr + 3);
 
             ++buffer_index;
-            if (buffer_index == BUF_SIZE)
-            {
-                // done recording
-                record = 0;
-                *(red_LED_ptr) = 0x0; // turn off LEDR
-            }
-            fifospace = *(audio_ptr + 1); // read the audio port fifospace register
+            // if (buffer_index == BUF_SIZE)
+            // {
+            //     // done recording
+            //     record = 0;
+            //     *(red_LED_ptr) = 0x0; // turn off LEDR
+            // }
+            // fifospace = *(audio_ptr + 1); // read the audio port fifospace register
             
         }
     }
