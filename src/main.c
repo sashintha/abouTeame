@@ -190,69 +190,66 @@ void checkVoltage(ctrlStruct ctrlStruct, int temp)
     int wantedTea = ctrlStruct.type;
 
     // LOOP UNTIL WATER REACHES DESIRED TEMPERATURE
-    while (1)
+    // printf("%d Tea:\n", wantedTea);
+    // printf("%d Temp:\n", temp);
+    ///////////////////
+    // BLACK
+    if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 1))
     {
-        //printf("%d Tea:\n", wantedTea);
-        //printf("%d Temp:\n", temp);
-        ///////////////////
-        // BLACK
-        if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 1))
-        {
-            printf("%d BLACK \n", temp);
-            return 1;
-        }
-        // HERBAL
-        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 128))
-        {
-            printf("%d HERBAL \n", temp);
-            return 1;
-        }
-        // ROOIBOS
-        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 512))
-        {
-            printf("%d ROOIBOS \n", temp);
-            return 1;
-        }
-        // PU-ERH
-        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 16))
-        {
-            printf("%d PU-ERH \n", temp);
-            return 1;
-        }
-        ///////////////////
-        // GREEN
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 2))
-        {
-            printf("%d GREEN \n", temp);
-            return 1;
-        }
-        // WHITE
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 4))
-        {
-            printf("%d WHITE \n", temp);
-            return 1;
-        }
-        // PURPLE
-        else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 32))
-        {
-            printf("%d PURPLE \n", temp);
-            return 1;
-        }
-        ///////////////////
-        // OOLONG
-        else if ((voltageTable[18] < temp < voltageTable[19]) && (wantedTea == 8))
-        {
-            printf("%d OOLONG \n", temp);
-            return 1;
-        }
-        // MATE
-        else if ((voltageTable[12] < temp < voltageTable[13]) && (wantedTea == 64))
-        {
-            printf("%d MATE \n", temp);
-            return 1;
-        }
-        ///////////////////
+        printf("%d BLACK \n", temp);
+        return 1;
     }
+    // HERBAL
+    else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 128))
+    {
+        printf("%d HERBAL \n", temp);
+        return 1;
+    }
+    // ROOIBOS
+    else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 512))
+    {
+        printf("%d ROOIBOS \n", temp);
+        return 1;
+    }
+    // PU-ERH
+    else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 16))
+    {
+        printf("%d PU-ERH \n", temp);
+        return 1;
+    }
+    ///////////////////
+    // GREEN
+    else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 2))
+    {
+        printf("%d GREEN \n", temp);
+        return 1;
+    }
+    // WHITE
+    else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 4))
+    {
+        printf("%d WHITE \n", temp);
+        return 1;
+    }
+    // PURPLE
+    else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 32))
+    {
+        printf("%d PURPLE \n", temp);
+        return 1;
+    }
+    ///////////////////
+    // OOLONG
+    else if ((voltageTable[18] < temp < voltageTable[19]) && (wantedTea == 8))
+    {
+        printf("%d OOLONG \n", temp);
+        return 1;
+    }
+    // MATE
+    else if ((voltageTable[12] < temp < voltageTable[13]) && (wantedTea == 64))
+    {
+        printf("%d MATE \n", temp);
+        return 1;
+    }
+    ///////////////////
 }
 
 // --------------------------- //
@@ -419,7 +416,6 @@ void main()
     ctrlStruct.currentTemp = readTemp(ctrlStruct);
     // NEXT SET TIMER VALUES BASED ON TEA
     TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
-
 
     // ************************************************************
     // CODE WITHOUT WAITING FOR WATER TO REACH REQUIRED TEMPERATURE
