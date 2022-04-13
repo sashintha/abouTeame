@@ -159,7 +159,7 @@ void TeaSelect(ctrlStruct *ctrlStruct, timerStruct *timeStruct, int T)
         *(LED_ptr) = 0x200;
         // USING FINAL SWITCH FOR TESTING //
         timeStruct->time.m = 0b0;
-        timeStruct->time.s = 0b011;
+        timeStruct->time.s = 0b0110;
         break;
     }
 }
@@ -192,61 +192,63 @@ void checkVoltage(ctrlStruct ctrlStruct, int temp)
     // LOOP UNTIL WATER REACHES DESIRED TEMPERATURE
     while (1)
     {
+        //printf("%d Tea:\n", wantedTea);
+        //printf("%d Temp:\n", temp);
         ///////////////////
         // BLACK
-        if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 1))
+        if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 1))
         {
-            printf("%d \n", temp);
+            printf("%d BLACK \n", temp);
             return 1;
         }
         // HERBAL
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 128))
+        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 128))
         {
-            printf("%d \n", temp);
+            printf("%d HERBAL \n", temp);
             return 1;
         }
         // ROOIBOS
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 512))
+        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 512))
         {
-            printf("%d \n", temp);
+            printf("%d ROOIBOS \n", temp);
             return 1;
         }
         // PU-ERH
-        else if ((voltageTable[20] < temp < voltageTable[0]) && (wantedTea == 16))
+        else if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 16))
         {
-            printf("%d \n", temp);
+            printf("%d PU-ERH \n", temp);
             return 1;
         }
         ///////////////////
         // GREEN
         else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 2))
         {
-            printf("%d \n", temp);
+            printf("%d GREEN \n", temp);
             return 1;
         }
         // WHITE
         else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 4))
         {
-            printf("%d \n", temp);
+            printf("%d WHITE \n", temp);
             return 1;
         }
         // PURPLE
         else if ((voltageTable[16] < temp < voltageTable[17]) && (wantedTea == 32))
         {
-            printf("%d \n", temp);
+            printf("%d PURPLE \n", temp);
             return 1;
         }
         ///////////////////
         // OOLONG
         else if ((voltageTable[18] < temp < voltageTable[19]) && (wantedTea == 8))
         {
-            printf("%d \n", temp);
+            printf("%d OOLONG \n", temp);
             return 1;
         }
         // MATE
         else if ((voltageTable[12] < temp < voltageTable[13]) && (wantedTea == 64))
         {
-            printf("%d \n", temp);
+            printf("%d MATE \n", temp);
             return 1;
         }
         ///////////////////
@@ -403,6 +405,7 @@ void main()
     ctrlStruct.timerStarted = 0;
     timeStruct.timerStartedDone = 0;
     int selectedTea;
+    int tempTest;
 
     // READ SWITCH (to get what tea to steep)
     selectedTea = ReadSwitches(&ctrlStruct);
@@ -411,20 +414,18 @@ void main()
     // CODE FOR WAITING FOR WATER TO REACH REQUIRED TEMPERATURE
     // ********************************************************
     // WAIT FOR WATER TO HEAT TO CORRECT TEMPERATURE
-    // while (1)
-    // {
-    //     // READ TEMP / VOLATGE
-    //     ctrlStruct.currentTemp = readTemp(ctrlStruct);
 
-    //     // NEXT SET TIMER VALUES BASED ON TEA
-    //     TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
-    // }
+    // READ TEMP / VOLATGE
+    ctrlStruct.currentTemp = readTemp(ctrlStruct);
+    // NEXT SET TIMER VALUES BASED ON TEA
+    TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
+
 
     // ************************************************************
     // CODE WITHOUT WAITING FOR WATER TO REACH REQUIRED TEMPERATURE
     // ************************************************************
     // SET TEA BASED OFF SELECTED SWITCH
-    TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
+    // TeaSelect(&ctrlStruct, &timeStruct, selectedTea);
 
     // FOR AUDIO RECORD AND PLAYBACK
     int fifospace;
