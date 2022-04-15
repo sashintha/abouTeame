@@ -190,9 +190,7 @@ void checkVoltage(ctrlStruct ctrlStruct, int temp)
     int wantedTea = ctrlStruct.type;
 
     // LOOP UNTIL WATER REACHES DESIRED TEMPERATURE
-    // printf("%d Tea:\n", wantedTea);
-    // printf("%d Temp:\n", temp);
-    ///////////////////
+    //
     // BLACK
     if ((voltageTable[20] < temp < voltageTable[21]) && (wantedTea == 1))
     {
@@ -446,10 +444,6 @@ void main()
 
     while (1)
     {
-        // GET TEMP FROM GPIO
-        // constantly reading from GPIO to get changing temperature (simulating temperture change)
-        // ctrlStruct.currentTemp = readTemp(ctrlStruct);
-
         // play audio when timer is finished
         if (timeStruct.playAudio == 1)
         {
